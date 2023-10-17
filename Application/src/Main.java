@@ -1,3 +1,4 @@
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,6 +43,7 @@ public class Main {
                             }
                         } catch (NumberFormatException ex) {
                             System.out.println("please introduce a valid number");
+                            break;
                         }
                     }
                     if (!itemFounded) System.out.println("There is no item with that id");
@@ -84,14 +86,16 @@ public class Main {
         }else{
             if (!activatedUser.getCupons().isEmpty()) discount = UsinCupon();
             if (discount != 0) {
-                System.out.println("The final price for you purchase is: " + (discount / 100) * activatedUser.getShoppingCart().calculate());
+                double finalPrice = (discount / 100) * activatedUser.getShoppingCart().calculate();
+                DecimalFormat df = new DecimalFormat("0.00");
+                System.out.println("The final price for your purchase is: " + df.format(finalPrice));
             }
             System.out.println("Thank you for using our service, and have a nice day!");
         }
     }
 
     /**
-     * Shows the coupons the user have and gives the option to use any or not.
+     * Shows the coupons the user have, and gives the option to use any or not.
      * if a coupon is used, this must be deleted form the user coupon List.
      *
      * @return the discount to use.
