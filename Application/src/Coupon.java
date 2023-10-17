@@ -1,11 +1,11 @@
-public class Cupon {
+public class Coupon {
     private int discount;
     private String name;
 
-    public Cupon() {
+    public Coupon() {
     }
 
-    public Cupon(int discount, String name) {
+    public Coupon(int discount, String name) {
         this.discount = discount;
         this.name = name;
     }
