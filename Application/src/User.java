@@ -1,17 +1,19 @@
+import java.util.List;
+
 public class User {
     private String username;
     private int password;
     private ShoppingCart shoppingCart;
-    private Cupon[] cupons;
+    private List<Coupon> coupons;
 
     public User() {
     }
 
-    public User(String username, int password, ShoppingCart shoppingCart, Cupon[] cupons) {
+    public User(String username, int password, ShoppingCart shoppingCart, List<Coupon> coupons) {
         this.username = username;
         this.password = password;
         this.shoppingCart = shoppingCart;
-        this.cupons = cupons;
+        this.coupons = coupons;
     }
 
     public String getUsername() {
@@ -38,11 +40,11 @@ public class User {
         this.shoppingCart = shoppingCart;
     }
 
-    public Cupon[] getCupons() {
-        return cupons;
+    public List<Coupon> getCupons() {
+        return coupons;
     }
 
-    public void setCupons(Cupon[] cupons) {
-        this.cupons = cupons;
+    public void setCupons(List<Coupon> coupons) {
+        this.coupons = coupons;
     }
 }

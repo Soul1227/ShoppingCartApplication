@@ -10,10 +10,18 @@ public class ShoppingCart {
         this.products = products;
     }
 
+    /**
+     * Adds an item to the user's ShoppingCart.
+     * @param product to add in the cart.
+     */
     public void add(Product product) {
         products.add(product);
     }
 
+    /**
+     * Removes an item from the user's ShoppingCart.
+     * @param position of the item in the cart.
+     */
     public void remove(int position) {
         try {
             products.remove(position);
@@ -22,12 +30,24 @@ public class ShoppingCart {
         }
     }
 
+    /**
+     * Shows all the items in the user ShoppingCart.
+     */
     public void view() {
-        for (int x = 0; x < products.size(); x++) {
-            System.out.println("Item position: " + x + "\n " + products.get(x).toString());
+        if (products.isEmpty()) {
+            System.out.println("The cart is empty.");
+        } else {
+            for (int x = 0; x < products.size(); x++) {
+                System.out.println("Item position: " + x + "\n " + products.get(x).toString());
+            }
         }
     }
 
+    /**
+     * Calculates the total sum of all the items' prices.
+     *
+     * @return The total price of all items as a double.
+     */
     public double calculate() {
         double finalPrice = 0;
         for (Product product : products
