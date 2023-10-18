@@ -1,8 +1,38 @@
-At the inicialization of the program 3 users are created.
+Hello my name is Angel.
+
+This application simulates a store, where the user can add items to the shopping cart, remove them, check what's
+inside and purchase them.
+
+The instructions to develop the application were a bit ambiguous, so I am going to explain how I interpreted them and what
+I decided to do.
+
+Firstly, it said that "The application should allow users to add products to their cart" and also there must be a Product class,
+with some attributes. But I didn't know if the intention was to allow the user to add whatever product they wanted to their cart,
+as if the user created the item, typing the name, description, etc... as they navigated through the store, or that I should create
+a few default products and those are the ones the user has access to. So I decided to implement both systems, after introducing
+the command "add" the user has to choose between selecting a pre-created item, or creating a new one. In case they choose
+creating the item, it will be also added to the store.
+
+Taking into account the "user authentication" mentioned in the instructions, I developed a login method, and a few default users to test
+its functionality, but as previously stated, it wasn't clear if it was expected to have a default user to test, so I also implemented a method to
+create new users on the run. At the initialization of the program, 3 users are created.
 
 username: Ana password: 1234
 username: Juan password: 5555
 username: Paco password: 6666
 
-Ana has 2 coupon to use and Juan and Paco just one.
+Ana has two coupons to use and Juan and Paco only one.
+
+In order To give the program more flexibility, I decided to implement a function to change the current "user session", Which allow the user
+to maintain its shopping cart data, even after logging out.
+
+
+
+
+
+
+
+
+
+
 
