@@ -15,11 +15,7 @@ public class Main {
         initiating();
         System.out.println("Welcome to our online shop\ninsert 1 to log in\ninsert 2 if you are a new costumer");
         ChooseAuthentication();
-        System.out.println("Welcome " + activatedUser.getUsername() + "\n");
-        System.out.println("Our products are the following:");
-        //show products
-        products.forEach(product -> System.out.println(product.toString()));
-        System.out.println("To navigate through our shop please use the following commands:");
+        ShowProducts();
         ShowCommands();// commands to navigate at the store.
         /*
           From now on, the user will use the commands to add/remove items from his cart, check what is currently in
@@ -70,6 +66,15 @@ public class Main {
                 default -> System.out.println("Unknown command: " + command);
             }
         }
+    }
+
+    /**
+     * Shows the products available
+     */
+    private static void ShowProducts() {
+        System.out.println("Our products are the following:");
+        products.forEach(product -> System.out.println(product.toString()));
+        System.out.println("\n");
     }
 
     /**
@@ -155,13 +160,14 @@ public class Main {
      * Shows the user the commands to used.
      */
     private static void ShowCommands() {
+        System.out.println("To navigate through our shop please use the following commands:");
         System.out.println("add productId -> adds the product to your cart.");
         System.out.println("view -> shows the items in your cart and its position in it.");
         System.out.println("remove productPosition -> remove the item in that position from your cart.");
         System.out.println("calculate -> shows the total price that the items in your cart sum.");
         System.out.println("change -> take you back to the login procedure, to change user.");
-        System.out.println("purchase -> takes you to the final step to accept or decline the purchase.\n");
-        System.out.println("help -> shows the commands");
+        System.out.println("purchase -> takes you to the final step to accept or decline the purchase.");
+        System.out.println("help -> shows the commands\n");
     }
 
     /**
@@ -202,7 +208,7 @@ public class Main {
         users.forEach(user -> {
             if (user.getUsername().equals(name) && user.getPassword().equals(password)) {
                 activatedUser = user;
-                System.out.println("welcome " + activatedUser.getUsername());
+                System.out.println("welcome " + activatedUser.getUsername()+"\n");
             }
         });
         if (activatedUser == null) {
@@ -215,14 +221,36 @@ public class Main {
      * Adds this new User to the Users List and set it as activatedUser.
      */
     private static void CreateNewUser() {
+        boolean nameTaken = true;
+        String name = "";
         System.out.println("**Creating a new user**");
-        System.out.println("insert your username");
-        String name = scanner.nextLine();
+        while(nameTaken){
+            System.out.println("insert your username");
+            name = scanner.nextLine();
+            if (CheckName(name)){
+                System.out.println("The username is already taken, please choose another one");
+            }else {
+                nameTaken=false;
+            }
+        }
         System.out.println("insert your password");
         String password = scanner.nextLine();
-
         User newUser = new User(name, password, new ShoppingCart(new LinkedList<>()), new ArrayList<>());
         users.add(newUser);
         activatedUser = newUser;
+        System.out.println("welcome "+activatedUser.getUsername()+"\n");
+    }
+
+    /**
+     * Checks if the username for a new user is already taken.
+     *
+     * @param name to check
+     * @return true is there is anothe user with that name, false otherwise.
+     */
+    private static boolean CheckName(String name) {
+        for (User user:users) {
+            if (user.getUsername().equals(name)) return true;
+        }
+        return false;
     }
 }
