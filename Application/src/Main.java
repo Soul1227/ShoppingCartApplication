@@ -65,7 +65,7 @@ public class Main {
                 case "add" -> {
                     //Choose between create and select.
                     System.out.println("If you want an item from the store type 'select'\n if you want to create a new one type 'create");
-                    command = scanner.nextLine();
+                    command = scanner.nextLine().trim().toLowerCase();
                 }
                 case "remove" -> {
                     //removes an item from the user's cart.
