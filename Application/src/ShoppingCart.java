@@ -1,46 +1,60 @@
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public class ShoppingCart {
-    private LinkedList<Product> products = new LinkedList<>();
+    private List<Product> products = new ArrayList<Product>();
 
     public ShoppingCart() {
     }
 
-    public ShoppingCart(LinkedList<Product> products) {
+    public ShoppingCart(List<Product> products) {
         this.products = products;
     }
 
     /**
-     * Adds an item to the user's ShoppingCart.
-     * @param product to add in the cart.
+     * Creates a new product and add it to the ShoppingCart.
+     *
+     * @param name        of the product.
+     * @param description of the product.
+     * @param price       of the product.
+     * @return a new product.
      */
-    public void add(Product product) {
-        products.add(product);
+    public Product Add(String name, String description, double price) {
+        Product product = new Product(UUID.randomUUID().toString(), name, description, price);
+        this.products.add(product);
+        return product;
     }
 
     /**
      * Removes an item from the user's ShoppingCart.
-     * @param position of the item in the cart.
+     *
+     * @param id of the item to delete.
+     * @return true if the item is deleted, false otherwise.
      */
-    public void remove(int position) {
-        try {
-            products.remove(position);
-        } catch (IndexOutOfBoundsException ex) {
-            System.out.println("there is no item in that position");
+    public boolean Remove(String id) {
+        int index = -1;
+        for (int i = 0; i < this.products.size(); i++) {
+            if (this.products.get(i).getId().equals(id)) {
+                index = i;
+                break;
+            }
         }
+
+        if (index != -1) {
+            this.products.remove(index);
+            return true;
+        }
+        return false;
     }
 
     /**
-     * Shows all the items in the user ShoppingCart.
+     * Retrieves the products in the cart.
+     *
+     * @return a List of product.
      */
-    public void view() {
-        if (products.isEmpty()) {
-            System.out.println("The cart is empty.");
-        } else {
-            for (int x = 0; x < products.size(); x++) {
-                System.out.println("Item position: " + x + "\n " + products.get(x).toString());
-            }
-        }
+    public List<Product> View() {
+        return this.products;
     }
 
     /**
@@ -48,20 +62,11 @@ public class ShoppingCart {
      *
      * @return The total price of all items as a double.
      */
-    public double calculate() {
-        double finalPrice = 0;
-        for (Product product : products
-        ) {
-            finalPrice += product.getPrice();
+    public double Calculate() {
+        double totalprice = 0;
+        for (int i = 0; i < this.products.size(); i++) {
+            totalprice += this.products.get(i).getPrice();
         }
-        return finalPrice;
-    }
-
-    public LinkedList<Product> getProducts() {
-        return products;
-    }
-
-    public void setProducts(LinkedList<Product> products) {
-        this.products = products;
+        return totalprice;
     }
 }

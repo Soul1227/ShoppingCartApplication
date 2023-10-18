@@ -1,80 +1,145 @@
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
     static Scanner scanner = new Scanner(System.in);
     static User activatedUser; // The logged user.
-    static ArrayList<User> users; // list of users created.
-    static ArrayList<Product> products; // List of products at the store.
+    static List<User> users = new ArrayList<User>();// list of users created.
+    static List<Product> userProducts = new ArrayList<Product>(); // List of user's products.
+    static List<Product> storeProducts = new ArrayList<Product>();// List of products at the store.
     static String command = ""; // user input.
 
     public static void main(String[] args) {
         initiating();
         System.out.println("Welcome to our online shop\ninsert 1 to log in\ninsert 2 if you are a new costumer");
         ChooseAuthentication();
-        ShowProducts();
-        ShowCommands();// commands to navigate at the store.
+        System.out.println("----------------------");
+        System.out.println("-WELCOME TO THE STORE-");
+        System.out.println("----------------------");
         /*
           From now on, the user will use the commands to add/remove items from his cart, check what is currently in
           the cart or check the total price, also it will be able to change user, going back to the login.
           The following loop will end when the command "purchase" is given.
          */
         while (!command.equals("purchase")) {
-            String input = scanner.nextLine();
-            input = input.trim().toLowerCase();
-            String[] tokens = input.split(" ");
-            command = tokens[0];
+            if (!command.equals("create") && !command.equals("select")) {
+                ShowCommands(); // commands to navigate at the store.
+                command = scanner.nextLine().trim().toLowerCase();
+            }
             switch (command) {
-                case "add" -> {
-                    boolean itemFounded = false;
-                    for (Product product : products) {
+                case "select" -> {
+                    //Select an item from the store and add it to the user's shopping cart.
+                    ShowProducts(storeProducts);
+                    Product productSelected = SelectProduct(storeProducts);
+                    if (productSelected == null) continue;
+
+                    productSelected = activatedUser.getShoppingCart().Add(productSelected.getName(), productSelected.getDescription(), productSelected.getPrice());
+                    System.out.println("product added to the cart: " + productSelected.toString());
+                    command = "";
+                }
+                case "view store" ->
+                    //Shows the items in the store.
+                        ShowProducts(storeProducts);
+                case "create" -> {
+                    //Creates a new item to add in the user's cart and to the store.
+                    boolean correctPrice = false;
+                    System.out.println("insert a name´s product:");
+                    String name = scanner.nextLine();
+                    System.out.println("insert a description:");
+                    String description = scanner.nextLine();
+                    System.out.println("insert price:");
+                    double price = 0;
+                    while (!correctPrice) {
                         try {
-                            if (product.getId() == Integer.parseInt(tokens[1])) {
-                                activatedUser.getShoppingCart().add(product);
-                                System.out.println("Product added to the cart: " + product);
-                                itemFounded = true;
-                            }
-                        } catch (NumberFormatException ex) {
-                            System.out.println("please introduce a valid number");
-                            break;
+                            price = Double.parseDouble(scanner.nextLine());
+                            correctPrice = true;
+                        } catch (Exception ex) {
+                            System.out.println("please inset a correct number (00.00)");
                         }
                     }
-                    if (!itemFounded) System.out.println("There is no item with that id");
+                    Product product = activatedUser.getShoppingCart().Add(name, description, price);
+                    storeProducts.add(product);
+                    System.out.println("product added to the cart: " + product.toString());
+                    command = "";
+                }
+                case "add" -> {
+                    //Choose between create and select.
+                    System.out.println("If you want an item from the store type 'select'\n if you want to create a new one type 'create");
+                    command = scanner.nextLine();
                 }
                 case "remove" -> {
-                    try {
-                        Product productDeleted = activatedUser.getShoppingCart().getProducts().get(Integer.parseInt(tokens[1]));
-                        activatedUser.getShoppingCart().remove(Integer.parseInt(tokens[1]));
-                        System.out.println("Product removed from the cart: " + productDeleted);
-                    } catch (NumberFormatException ex) {
-                        System.out.println("please introduce a valid number");
-                    } catch (IndexOutOfBoundsException ex) {
-                        System.out.println("There is no item in your cart in that position");
+                    //removes an item from the user's cart.
+                    userProducts = activatedUser.getShoppingCart().View();
+                    ShowProducts(userProducts);
+                    Product productToRemove = SelectProduct(userProducts);
+                    if (productToRemove == null) continue;
+
+                    boolean removed = activatedUser.getShoppingCart().Remove(productToRemove.getId());
+                    if (removed) {
+                        System.out.println("the item " + productToRemove.toString() + " has been removed");
+                    } else {
+                        System.out.println("the item " + productToRemove.toString() + " couldnt be removed");
                     }
                 }
-                case "view" -> activatedUser.getShoppingCart().view();
-                case "calculate" -> System.out.println("Total price:" + activatedUser.getShoppingCart().calculate());
-                case "help" -> ShowCommands();
+                case "view cart" -> {
+                    //Shows the items in the user's cart.
+                    userProducts = activatedUser.getShoppingCart().View();
+                    System.out.println("Your cart:");
+                    ShowProducts(userProducts);
+                }
+                case "calculate" ->
+                    //Shows the total price of the cart.
+                        System.out.println("Total price:" + activatedUser.getShoppingCart().Calculate());
+                case "help" ->
+                    // Shows the commands to uses.
+                        ShowCommands();
                 case "change" -> {
+                    //Changes users.
                     activatedUser = null;
                     login();
                 }
-                case "purchase" -> Purchase();
+                case "purchase" ->
+                    //Buy the items in the user's cart.
+                        Purchase();
                 default -> System.out.println("Unknown command: " + command);
             }
         }
     }
 
     /**
-     * Shows the products available
+     * Shows the products available in the List given.
+     *
+     * @param products List of products to show.
      */
-    private static void ShowProducts() {
-        System.out.println("Our products are the following:");
-        products.forEach(product -> System.out.println(product.toString()));
-        System.out.println("\n");
+    private static void ShowProducts(List<Product> products) {
+        for (int i = 0; i < products.size(); i++) {
+            System.out.println(i + " -> " + products.get(i).toString());
+        }
+        System.out.println("");
+    }
+
+    /**
+     * Select a product from a List.
+     *
+     * @param products List of products where to choose.
+     * @return the product chosen.
+     */
+    private static Product SelectProduct(List<Product> products) {
+        int position = -1;
+        boolean correctPosition = false;
+        while (!correctPosition) {
+            try {
+                position = Integer.parseInt(scanner.nextLine());
+                correctPosition = true;
+            } catch (Exception ex) {
+                System.out.println("please inset a correct position");
+            }
+        }
+        if (position >= products.size() || position < 0) {
+            System.out.println("there is no item in that position");
+            return null;
+        }
+        return products.get(position);
     }
 
     /**
@@ -105,13 +170,13 @@ public class Main {
      */
     private static void Purchase() {
         double discount = 0;
-        System.out.println("The total price of your purchase is: " + activatedUser.getShoppingCart().calculate());
-        if (activatedUser.getShoppingCart().calculate() == 0) {
+        System.out.println("The total price of your purchase is: " + activatedUser.getShoppingCart().Calculate());
+        if (activatedUser.getShoppingCart().Calculate() == 0) {
             System.out.println("Thank you for using our service, and have a nice day!");
         } else {
-            if (!activatedUser.getCupons().isEmpty()) discount = UsinCupon();
+            if (!activatedUser.getCupons().isEmpty()) discount = UsingCoupon();
             if (discount != 0) {
-                double finalPrice = (discount / 100) * activatedUser.getShoppingCart().calculate();
+                double finalPrice = (discount / 100) * activatedUser.getShoppingCart().Calculate();
                 DecimalFormat df = new DecimalFormat("0.00");
                 System.out.println("The final price for your purchase is: " + df.format(finalPrice));
             }
@@ -125,7 +190,7 @@ public class Main {
      *
      * @return the discount to use.
      */
-    private static double UsinCupon() {
+    private static double UsingCoupon() {
         boolean cuponSelected = false;
         int discount = 0;
         System.out.println("You have the following coupons:");
@@ -140,11 +205,11 @@ public class Main {
                 cuponSelected = true;
             } else {
                 try {
-                    int cupongId = Integer.parseInt(command2);
-                    if (activatedUser.getCupons().get(cupongId) != null) {
+                    int coupongId = Integer.parseInt(command2);
+                    if (activatedUser.getCupons().get(coupongId) != null) {
                         cuponSelected = true;
-                        discount = activatedUser.getCupons().get(cupongId).getDiscount();
-                        activatedUser.getCupons().remove(cupongId);
+                        discount = activatedUser.getCupons().get(coupongId).getDiscount();
+                        activatedUser.getCupons().remove(coupongId);
                     }
                 } catch (NumberFormatException ex) {
                     System.out.println("the number given does not match any coupon");
@@ -160,34 +225,36 @@ public class Main {
      * Shows the user the commands to used.
      */
     private static void ShowCommands() {
-        System.out.println("To navigate through our shop please use the following commands:");
-        System.out.println("add productId -> adds the product to your cart.");
-        System.out.println("view -> shows the items in your cart and its position in it.");
-        System.out.println("remove productPosition -> remove the item in that position from your cart.");
+        System.out.println("");
+        System.out.println("Use the following commands to navigate throuth the store:");
+        System.out.println("");
+        System.out.println("add -> adds the product to your cart.");
+        System.out.println("view cart-> shows the items in your cart and its position in it.");
+        System.out.println("view store-> shows the items at the store.");
+        System.out.println("remove -> remove the item in that position from your cart.");
         System.out.println("calculate -> shows the total price that the items in your cart sum.");
         System.out.println("change -> take you back to the login procedure, to change user.");
         System.out.println("purchase -> takes you to the final step to accept or decline the purchase.");
-        System.out.println("help -> shows the commands\n");
+        System.out.println("help -> shows the commands");
+        System.out.println("");
     }
 
     /**
      * Initialize the Lists
      */
     private static void initiating() {
-        users = new ArrayList<>();
-        users.add(new User("Ana", "1234", new ShoppingCart(new LinkedList<>()), new ArrayList<>(List.of(new Coupon(30, "30%"), new Coupon(40, "40%")))));
-        users.add(new User("Juan", "5555", new ShoppingCart(new LinkedList<>()), new ArrayList<>(List.of(new Coupon(20, "20%")))));
-        users.add(new User("Paco", "6666", new ShoppingCart(new LinkedList<>()), new ArrayList<>(List.of(new Coupon(50, "50%")))));
+        users.add(new User("Ana", Base64.getEncoder().encodeToString("1234".getBytes()), new ShoppingCart(new LinkedList<>()), new ArrayList<>(List.of(new Coupon(30, "30%"), new Coupon(40, "40%")))));
+        users.add(new User("Juan", Base64.getEncoder().encodeToString("5555".getBytes()), new ShoppingCart(new LinkedList<>()), new ArrayList<>(List.of(new Coupon(20, "20%")))));
+        users.add(new User("Paco", Base64.getEncoder().encodeToString("6666".getBytes()), new ShoppingCart(new LinkedList<>()), new ArrayList<>(List.of(new Coupon(50, "50%")))));
 
-        products = new ArrayList<>();
-        products.add(new Product(1, "Tio Pepe", "white wine", 15.50));
-        products.add(new Product(2, "Cabernet Sauvignon", "red wine", 25.50));
-        products.add(new Product(3, "Merlot", "red wine", 35.50));
-        products.add(new Product(4, "Syrah", "white wine", 45.50));
+        storeProducts.add(new Product("1", "Tio Pepe", "white wine", 15.50));
+        storeProducts.add(new Product("2", "Cabernet Sauvignon", "red wine", 25.50));
+        storeProducts.add(new Product("3", "Merlot", "red wine", 35.50));
+        storeProducts.add(new Product("4", "Syrah", "white wine", 45.50));
     }
 
     /**
-     * Ask the user to enter their username and password and calls
+     * Ask the user to insert their username and password, calls
      * the CheckUser() method for authentication.
      */
     private static void login() {
@@ -196,6 +263,7 @@ public class Main {
             String name = scanner.nextLine();
             System.out.println("insert your password");
             String password = scanner.nextLine();
+            password = Base64.getEncoder().encodeToString(password.getBytes());
             CheckUser(name, password);
         }
     }
@@ -208,7 +276,7 @@ public class Main {
         users.forEach(user -> {
             if (user.getUsername().equals(name) && user.getPassword().equals(password)) {
                 activatedUser = user;
-                System.out.println("welcome " + activatedUser.getUsername()+"\n");
+                System.out.println("welcome " + activatedUser.getUsername() + "\n");
             }
         });
         if (activatedUser == null) {
@@ -224,21 +292,19 @@ public class Main {
         boolean nameTaken = true;
         String name = "";
         System.out.println("**Creating a new user**");
-        while(nameTaken){
+        while (nameTaken) {
             System.out.println("insert your username");
             name = scanner.nextLine();
-            if (CheckName(name)){
-                System.out.println("The username is already taken, please choose another one");
-            }else {
-                nameTaken=false;
-            }
+            nameTaken = CheckName(name);
+            if (nameTaken) System.out.println("The username is already taken, please choose another one");
         }
         System.out.println("insert your password");
         String password = scanner.nextLine();
-        User newUser = new User(name, password, new ShoppingCart(new LinkedList<>()), new ArrayList<>());
+        password = Base64.getEncoder().encodeToString(password.getBytes());
+        User newUser = new User(name, password);
         users.add(newUser);
         activatedUser = newUser;
-        System.out.println("welcome "+activatedUser.getUsername()+"\n");
+        System.out.println("welcome " + activatedUser.getUsername() + "\n");
     }
 
     /**
@@ -248,9 +314,13 @@ public class Main {
      * @return true is there is anothe user with that name, false otherwise.
      */
     private static boolean CheckName(String name) {
-        for (User user:users) {
-            if (user.getUsername().equals(name)) return true;
+        boolean found = false;
+        for (User user : users) {
+            if (user.getUsername().equals(name)) {
+                found = true;
+                break;
+            }
         }
-        return false;
+        return found;
     }
 }

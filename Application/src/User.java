@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 public class User {
@@ -9,11 +10,18 @@ public class User {
     public User() {
     }
 
+    public User(String username, String password) {
+        this.username = username;
+        this.password = password;
+        this.shoppingCart = new ShoppingCart();
+        this.coupons = new ArrayList<Coupon>();
+    }
+
     public User(String username, String password, ShoppingCart shoppingCart, List<Coupon> coupons) {
         this.username = username;
         this.password = password;
         this.shoppingCart = shoppingCart;
-        this.coupons = coupons;
+        this.coupons =coupons;
     }
 
     public String getUsername() {
