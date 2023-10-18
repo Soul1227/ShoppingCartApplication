@@ -13,13 +13,9 @@ public class Main {
 
     public static void main(String[] args) {
         initiating();
-        System.out.println("Welcome to our online shop\nFirst insert you username and password\nIf you are a new costumer please type 'new'");
-        login();
-        System.out.println("Welcome " + activatedUser.getUsername() + "\n");
-        System.out.println("Our products are the following:");
-        //show products
-        products.forEach(product -> System.out.println(product.toString()));
-        System.out.println("To navigate through our shop please use the following commands:");
+        System.out.println("Welcome to our online shop\ninsert 1 to log in\ninsert 2 if you are a new costumer");
+        ChooseAuthentication();
+        ShowProducts();
         ShowCommands();// commands to navigate at the store.
         /*
           From now on, the user will use the commands to add/remove items from his cart, check what is currently in
@@ -64,13 +60,41 @@ public class Main {
                 case "help" -> ShowCommands();
                 case "change" -> {
                     activatedUser = null;
-                    System.out.println("Insert your username:");
                     login();
                 }
-                case "purchase" -> {
-                    Purchase();
-                }
+                case "purchase" -> Purchase();
                 default -> System.out.println("Unknown command: " + command);
+            }
+        }
+    }
+
+    /**
+     * Shows the products available
+     */
+    private static void ShowProducts() {
+        System.out.println("Our products are the following:");
+        products.forEach(product -> System.out.println(product.toString()));
+        System.out.println("\n");
+    }
+
+    /**
+     * Gives the user the option to choose between log in or sing in.
+     */
+    private static void ChooseAuthentication() {
+        boolean chosen = false;
+        while (!chosen) {
+            command = scanner.nextLine();
+            switch (command) {
+                case "1" -> {
+                    login();
+                    chosen = true;
+                }
+                case "2" -> {
+                    CreateNewUser();
+                    chosen = true;
+                }
+                default ->
+                        System.out.println("command not found\ninsert 1 to log in\ninsert 2 if you are a new costumer");
             }
         }
     }
@@ -82,9 +106,9 @@ public class Main {
     private static void Purchase() {
         double discount = 0;
         System.out.println("The total price of your purchase is: " + activatedUser.getShoppingCart().calculate());
-        if(activatedUser.getShoppingCart().calculate()==0){
+        if (activatedUser.getShoppingCart().calculate() == 0) {
             System.out.println("Thank you for using our service, and have a nice day!");
-        }else{
+        } else {
             if (!activatedUser.getCupons().isEmpty()) discount = UsinCupon();
             if (discount != 0) {
                 double finalPrice = (discount / 100) * activatedUser.getShoppingCart().calculate();
@@ -111,7 +135,7 @@ public class Main {
         }
         while (!cuponSelected) {
             System.out.println("If you want to use any, please type its id number, otherwise type 'no'");
-           String command2 = scanner.nextLine();
+            String command2 = scanner.nextLine();
             if (command2.equals("no")) {
                 cuponSelected = true;
             } else {
@@ -136,13 +160,14 @@ public class Main {
      * Shows the user the commands to used.
      */
     private static void ShowCommands() {
+        System.out.println("To navigate through our shop please use the following commands:");
         System.out.println("add productId -> adds the product to your cart.");
         System.out.println("view -> shows the items in your cart and its position in it.");
         System.out.println("remove productPosition -> remove the item in that position from your cart.");
         System.out.println("calculate -> shows the total price that the items in your cart sum.");
         System.out.println("change -> take you back to the login procedure, to change user.");
-        System.out.println("purchase -> takes you to the final step to accept or decline the purchase.\n");
-        System.out.println("help -> shows the commands");
+        System.out.println("purchase -> takes you to the final step to accept or decline the purchase.");
+        System.out.println("help -> shows the commands\n");
     }
 
     /**
@@ -150,9 +175,9 @@ public class Main {
      */
     private static void initiating() {
         users = new ArrayList<>();
-        users.add(new User("Ana", 1234, new ShoppingCart(new LinkedList<>()), new ArrayList<>(List.of(new Coupon(30, "30%"), new Coupon(40, "40%")))));
-        users.add(new User("Juan", 5555, new ShoppingCart(new LinkedList<>()), new ArrayList<>(List.of(new Coupon(20, "20%")))));
-        users.add(new User("Paco", 6666, new ShoppingCart(new LinkedList<>()), new ArrayList<>(List.of(new Coupon(50, "50%")))));
+        users.add(new User("Ana", "1234", new ShoppingCart(new LinkedList<>()), new ArrayList<>(List.of(new Coupon(30, "30%"), new Coupon(40, "40%")))));
+        users.add(new User("Juan", "5555", new ShoppingCart(new LinkedList<>()), new ArrayList<>(List.of(new Coupon(20, "20%")))));
+        users.add(new User("Paco", "6666", new ShoppingCart(new LinkedList<>()), new ArrayList<>(List.of(new Coupon(50, "50%")))));
 
         products = new ArrayList<>();
         products.add(new Product(1, "Tio Pepe", "white wine", 15.50));
@@ -162,66 +187,28 @@ public class Main {
     }
 
     /**
-     * Performs user login functionality, including username and password validation.
-     * The method prompts the user to enter their username and password, and performs
-     * the following actions:
-     * - If the username is "new", it calls the CreateNewUser() method.
-     * - If the username is invalid (contains non-alphabet characters), it prompts the
-     * user to enter a valid username.
-     * - If the password is invalid (not a 4-digit number), it prompts the user to enter
-     * a valid password.
-     * - Finally, it calls the CheckUser() method to verify the entered username and
-     * password for authentication.
+     * Ask the user to enter their username and password and calls
+     * the CheckUser() method for authentication.
      */
     private static void login() {
         while (activatedUser == null) {
+            System.out.println("insert your username");
             String name = scanner.nextLine();
-            if (name.equals("new")) {
-                CreateNewUser();
-            } else {
-                while (CheckName(name)) {
-                    System.out.println("insert your username (Only letter please)");
-                    name = scanner.nextLine();
-                }
-                System.out.println("insert your password (A number with 4 digits)");
-                int password = scanner.nextInt();
-                while (CheckPassword(password)) {
-                    System.out.println("insert your password (A number with 4 digits)");
-                    password = scanner.nextInt();
-                }
-                CheckUser(name, password);
-            }
+            System.out.println("insert your password");
+            String password = scanner.nextLine();
+            CheckUser(name, password);
         }
-    }
-
-    /**
-     * Checks if the number password is between 1000 an 9999.
-     *
-     * @param password the number to be checked
-     * @return True if password is smaller than 1000 or bigger than 9999, false otherwise.
-     */
-    private static boolean CheckPassword(int password) {
-        return password < 1000 || password > 9999;
-    }
-
-    /**
-     * Checks if a string contains only letters (alphabet).
-     *
-     * @param name The string to be checked.
-     * @return false if the string contains only letters, true otherwise.
-     */
-    private static boolean CheckName(String name) {
-        return !name.matches("^[a-zA-Z]+$");
     }
 
     /**
      * Checks the username and password given. if there is any user that
      * matches in the users List, it will be set as activatedUser.
      */
-    private static void CheckUser(String name, int password) {
+    private static void CheckUser(String name, String password) {
         users.forEach(user -> {
-            if (user.getUsername().equals(name) && user.getPassword() == password) {
+            if (user.getUsername().equals(name) && user.getPassword().equals(password)) {
                 activatedUser = user;
+                System.out.println("welcome " + activatedUser.getUsername()+"\n");
             }
         });
         if (activatedUser == null) {
@@ -234,14 +221,36 @@ public class Main {
      * Adds this new User to the Users List and set it as activatedUser.
      */
     private static void CreateNewUser() {
+        boolean nameTaken = true;
+        String name = "";
         System.out.println("**Creating a new user**");
-        System.out.println("insert your username (Only letter please)");
-        String name = scanner.nextLine();
-        System.out.println("insert your password (A number with 4 digits)");
-        int password = scanner.nextInt();
-
+        while(nameTaken){
+            System.out.println("insert your username");
+            name = scanner.nextLine();
+            if (CheckName(name)){
+                System.out.println("The username is already taken, please choose another one");
+            }else {
+                nameTaken=false;
+            }
+        }
+        System.out.println("insert your password");
+        String password = scanner.nextLine();
         User newUser = new User(name, password, new ShoppingCart(new LinkedList<>()), new ArrayList<>());
         users.add(newUser);
         activatedUser = newUser;
+        System.out.println("welcome "+activatedUser.getUsername()+"\n");
+    }
+
+    /**
+     * Checks if the username for a new user is already taken.
+     *
+     * @param name to check
+     * @return true is there is anothe user with that name, false otherwise.
+     */
+    private static boolean CheckName(String name) {
+        for (User user:users) {
+            if (user.getUsername().equals(name)) return true;
+        }
+        return false;
     }
 }
