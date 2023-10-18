@@ -2,14 +2,14 @@ import java.util.List;
 
 public class User {
     private String username;
-    private int password;
+    private String password;
     private ShoppingCart shoppingCart;
     private List<Coupon> coupons;
 
     public User() {
     }
 
-    public User(String username, int password, ShoppingCart shoppingCart, List<Coupon> coupons) {
+    public User(String username, String password, ShoppingCart shoppingCart, List<Coupon> coupons) {
         this.username = username;
         this.password = password;
         this.shoppingCart = shoppingCart;
@@ -24,11 +24,11 @@ public class User {
         this.username = username;
     }
 
-    public int getPassword() {
+    public String getPassword() {
         return password;
     }
 
-    public void setPassword(int password) {
+    public void setPassword(String password) {
         this.password = password;
     }
 
