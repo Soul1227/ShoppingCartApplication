@@ -1,0 +1,8 @@
+At the inicialization of the program 3 users are created.
+
+username: Ana password: 1234
+username: Juan password: 5555
+username: Paco password: 6666
+
+Ana has 2 coupon to use and Juan and Paco just one.
+

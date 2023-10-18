@@ -61,6 +61,7 @@ public class Main {
                 }
                 case "view" -> activatedUser.getShoppingCart().view();
                 case "calculate" -> System.out.println("Total price:" + activatedUser.getShoppingCart().calculate());
+                case "help" -> ShowCommands();
                 case "change" -> {
                     activatedUser = null;
                     System.out.println("Insert your username:");
@@ -105,17 +106,17 @@ public class Main {
         int discount = 0;
         System.out.println("You have the following coupons:");
         for (int x = 0; x <= activatedUser.getCupons().size() - 1; x++) {
-            System.out.println("Cupon id " + x);
+            System.out.println("Coupon id " + x);
             System.out.println(activatedUser.getCupons().get(x).getName() + " Discount");
         }
         while (!cuponSelected) {
             System.out.println("If you want to use any, please type its id number, otherwise type 'no'");
-            command = scanner.nextLine();
-            if (command.equals("no")) {
+           String command2 = scanner.nextLine();
+            if (command2.equals("no")) {
                 cuponSelected = true;
             } else {
                 try {
-                    int cupongId = Integer.parseInt(command);
+                    int cupongId = Integer.parseInt(command2);
                     if (activatedUser.getCupons().get(cupongId) != null) {
                         cuponSelected = true;
                         discount = activatedUser.getCupons().get(cupongId).getDiscount();
@@ -141,6 +142,7 @@ public class Main {
         System.out.println("calculate -> shows the total price that the items in your cart sum.");
         System.out.println("change -> take you back to the login procedure, to change user.");
         System.out.println("purchase -> takes you to the final step to accept or decline the purchase.\n");
+        System.out.println("help -> shows the commands");
     }
 
     /**
