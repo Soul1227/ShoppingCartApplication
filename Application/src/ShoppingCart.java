@@ -2,12 +2,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * The ShoppingCart class represents a shopping cart that can hold a collection of products
+ * for a user's online shopping session.
+ */
 public class ShoppingCart {
     private List<Product> products = new ArrayList<Product>();
 
+    /**
+     * Constructs an empty shopping cart with no products.
+     */
     public ShoppingCart() {
     }
 
+    /**
+     * Constructs a shopping cart with the provided list of products.
+     *
+     * @param products the list of products to initialize the shopping cart with
+     */
     public ShoppingCart(List<Product> products) {
         this.products = products;
     }
