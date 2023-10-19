@@ -54,7 +54,7 @@ public class Main {
                             price = Double.parseDouble(scanner.nextLine());
                             correctPrice = true;
                         } catch (Exception ex) {
-                            System.out.println("please inset a correct number (00.00)");
+                            System.out.println("please inset a correct value (00.00)");
                         }
                     }
                     Product product = activatedUser.getShoppingCart().Add(name, description, price);
@@ -64,7 +64,7 @@ public class Main {
                 }
                 case "add" -> {
                     //Choose between create and select.
-                    System.out.println("If you want an item from the store type 'select'\n if you want to create a new one type 'create");
+                    System.out.println("If you want an item from the store type 'select'\n if you want to create a new one type 'create'");
                     command = scanner.nextLine().trim().toLowerCase();
                 }
                 case "remove" -> {
@@ -127,6 +127,7 @@ public class Main {
     private static Product SelectProduct(List<Product> products) {
         int position = -1;
         boolean correctPosition = false;
+        System.out.println("insert the position of the item to be removed.");
         while (!correctPosition) {
             try {
                 position = Integer.parseInt(scanner.nextLine());
@@ -226,7 +227,7 @@ public class Main {
      */
     private static void ShowCommands() {
         System.out.println("");
-        System.out.println("Use the following commands to navigate throuth the store:");
+        System.out.println("Use the following commands to navigate through the store:");
         System.out.println("");
         System.out.println("add -> adds the product to your cart.");
         System.out.println("view cart-> shows the items in your cart and its position in it.");
@@ -234,7 +235,7 @@ public class Main {
         System.out.println("remove -> remove the item in that position from your cart.");
         System.out.println("calculate -> shows the total price that the items in your cart sum.");
         System.out.println("change -> take you back to the login procedure, to change user.");
-        System.out.println("purchase -> takes you to the final step to accept or decline the purchase.");
+        System.out.println("purchase -> takes you to the final step to accept 1the purchase.");
         System.out.println("help -> shows the commands");
         System.out.println("");
     }
